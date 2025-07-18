@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Superhero Birthday Explosive Box</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Poppins:wght@400;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(105deg, #1a2a6c, #263a86, #b21f1f, #fdbb2d);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .comic-text {
+            font-family: 'Bangers', cursive;
+            letter-spacing: 1px;
+        }
+        
+        .box {
+            width: 300px;
+            height: 300px;
+            perspective: 1000px;
+            transition: all 0.5s ease;
+        }
+        
+        .box-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 1.5s ease;
+        }
+        
+        .box.open .box-inner {
+            transform: rotateX(90deg) rotateY(90deg);
+        }
+        
+        .box-side {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+        }
+        
+        .box-top {
+            transform: translateZ(150px);
+            background: #e23636; /* Spider-Man red */
+            z-index: 2;
+        }
+        
+        .box-bottom {
+            transform: rotateX(180deg) translateZ(150px);
+            background: #0088cc; /* Thor blue */
+        }
+        
+        .box-left {
+            transform: rotateY(-90deg) translateZ(150px);
+            background: #e23636; /* Spider-Man red */
+        }
+        
+        .box-right {
+            transform: rotateY(90deg) translateZ(150px);
+            background: #0088cc; /* Thor blue */
+        }
+        
+        .box-front {
+            transform: rotateX(90deg) translateZ(150px);
+            background: #e23636; /* Spider-Man red */
+        }
+        
+        .box-back {
+            transform: rotateX(-90deg) translateZ(150px);
+            background: #f9b22f; /* Thor blue */
+        }
+        
+        .content {
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 1s ease;
+        }
+        
+        .box.open ~ .content {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .memory {
+            width: 200px;
+            height: 200px;
+            position: absolute;
+            transition: all 0.8s ease;
+            transform: scale(0);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            border: 8px solid white;
+            overflow: hidden;
+        }
+        
+        .box.open ~ .memory {
+            transform: scale(1);
+        }
+        
+        .memory-1 {
+            top: 10%;
+            left: 15%;
+            transform-origin: bottom right;
+            transition-delay: 0.6s;
+            background: #e23636;
+            rotate: -15deg;
+        }
+        
+        .memory-2 {
+            top: 10%;
+            right: 8.5%;
+            transform-origin: bottom left;
+            transition-delay: 0.8s;
+            background: #0088cc;
+            rotate: 10deg;
+        }
+        
+        .memory-3 {
+            bottom: 15%;
+            left: 25%;
+            transform-origin: top right;
+            transition-delay: 1s;
+            background: #e23636;
+            rotate: 8deg;
+        }
+        
+        .memory-4 {
+            bottom: 15%;
+            right: 20%;
+            transform-origin: top left;
+            transition-delay: 1.2s;
+            background: #0088cc;
+            rotate: -5deg;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            opacity: 0;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .ribbon {
+            position: absolute;
+            width: 80px;
+            height: 40px;
+            border-radius: 25px;
+            background-color: #fdbb2d;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .ribbon:hover {
+            transform: translateX(-50%) scale(1.1);
+        }
+        
+        .message {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1s ease;
+            transition-delay: 1.5s;
+            color: #333;
+        }
+        
+        .box.open ~ .message {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .spider-web {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            opacity: 0.7;
+        }
+        
+        .lightning {
+            position: absolute;
+            opacity: 0;
+            filter: drop-shadow(0 0 10px #ffcc00);
+        }
+        
+        @keyframes lightning {
+            0% { opacity: 0; }
+            20% { opacity: 1; }
+            40% { opacity: 0; }
+            60% { opacity: 1; }
+            80% { opacity: 0; }
+            100% { opacity: 0; }
+        }
+        
+        .gift-card {
+            width: 90%;
+            max-width: 800px;
+            height: 600;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+            transition: all 1s ease;
+            margin: 0 auto;
+            opacity: 0;
+            position: relative;
+            transform-origin: top center;
+            padding: 10px 10px 10px 10px;
+        }
+        
+        .box.open ~ .gift-card {
+            height: 400px;
+            opacity: 1;
+            margin: 30px auto;
+            transition-delay: 2s;
+        }
+        
+        .gift-card-inner {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            color: #333;
+        }
+        
+        .collage {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 10px;
+            height: 450px;
+            margin-bottom: 15px;
+            padding: 10px 10px 10px 10px;
+        }
+        
+        .collage-item {
+            background-color: #f0f0f0;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .collage-item:first-child {
+            grid-column: span 2;
+            grid-row: span 2;
+           
+        }
+        .collage-text-area{
+            height: auto;
+            width: 90%;
+            display: inline-flex;
+            justify-content: center;
+        }
+        
+        .hero-icon {
+            position: absolute;
+            width: 0px;
+            height: 0px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            top: 10px;
+            right: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            z-index: 2;
+            padding-bottom: 10px;
+        }
+        .hero-icon-class{
+            height: 150px;
+            width: 250px;
+            display: flex;
+            justify-content: center;
+            background-size: cover;
+        
+        }
+        .hero-icon-class img{
+            margin: 5px 5px 5px 5px;
+            height: 140px;
+        }
+        /* Web animation */
+        @keyframes webGrow {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 0.7; }
+        }
+        
+        /* Hammer animation */
+        @keyframes hammerSwing {
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(-20deg); }
+            100% { transform: rotate(0deg); }
+        }
+        
+        .hammer {
+            animation: hammerSwing 2s infinite;
+            transform-origin: bottom right;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        
+
+        .title-underline {
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+            margin: 0 auto;
+            border-radius: 2px;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+        .gallery-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            max-width: 1000px;
+            width: 100%;
+            padding: 1rem;
+        }
+
+        .photo-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .photo-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            border: 3px solid #d55a73;
+        }
+
+        .photo-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .photo-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            color: white;
+            padding: 1rem;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            border-radius: 0 0 15px 15px;
+        }
+
+        .photo-card:hover .photo-overlay {
+            transform: translateY(0);
+        }
+
+        .photo-placeholder {
+            color: white;
+            font-size: 3rem;
+            text-align: center;
+            opacity: 0.8;
+        }
+
+        .photo-placeholder p {
+            font-size: 1rem;
+            margin-top: 1rem;
+            opacity: 0.8;
+        }
+        .img-hero-box{
+            height: 100px;
+            width: 200px;
+            display: inline;
+            justify-content: center;
+            margin-bottom: 140px;
+        }
+
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center p-4 md:p-8">
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-8 comic-text text-yellow-300 drop-shadow-lg">HAPPPPPPYYY BIRTHDAY! UNCLE JI😸</h1>
+ 
+    <div class="box relative mb-8 mt-8">
+        <div class="ribbon" id="ribbon"><h1 style="display: flex; justify-content: center ; margin-top: 5px; text-shadow: 0 0 20px rgba(0, 0, 0, 0.5);">😸</h1></div>
+        <div class="box-inner">
+            <div class="box-side box-top flex flex-col items-center justify-center">
+                <svg class="absolute w-full h-full opacity-30" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M30,20 L70,20 L70,80 L30,80 Z" fill="none" stroke="white" stroke-width="1"/>
+                    <circle cx="50" cy="50" r="30" fill="none" stroke="white" stroke-width="1"/>
+                    <path d="M20,50 L80,50" stroke="white" stroke-width="1"/>
+                    <path d="M50,20 L50,80" stroke="white" stroke-width="1"/>
+                </svg>
+                <div class="img-hero-box" >
+                 <img src="Deadpool and Wolverine BFF.jpeg" style="padding: 10px 10px 10px 10px ; margin-top: 50px;"/>
+                 </div>
+                <div class="text-white text-center z-10">
+                    <h2 class="text-2xl font-bold mb-2 comic-text">CLICK THE BUTTON</h2>
+                    <p>Upar wala yellow circle🌞</p>
+                </div>
+            </div>
+            <div class="box-side box-bottom flex items-center justify-center">
+                <svg class="w-3/4 h-3/4" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M50,10 L60,40 L90,40 L65,60 L75,90 L50,70 L25,90 L35,60 L10,40 L40,40 Z" fill="#ffcc00" stroke="#ffcc00" stroke-width="2"/>
+                </svg>
+            </div>
+            <div class="box-side box-left flex items-center justify-center">
+                <svg class="w-3/4 h-3/4" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="white" stroke-width="2"/>
+                    <path d="M50,10 L50,90 M10,50 L90,50 M22,22 L78,78 M22,78 L78,22" stroke="white" stroke-width="2"/>
+                </svg>
+                 <img src="IMG_20241205_173248_488.jpg" height="150px"/>
+            </div>
+            <div class="box-side box-right flex items-center justify-center">
+                <svg class="w-3/4 h-3/4 hammer" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="40" y="20" width="20" height="50" fill="#ffcc00" stroke="#333" stroke-width="2"/>
+                    <rect x="20" y="10" width="60" height="20" fill="#ffcc00" stroke="#333" stroke-width="2"/>
+                </svg>
+            </div>
+            <div class="box-side box-front flex items-center justify-center">
+                <svg class="w-3/4 h-3/4" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="white" stroke-width="2"/>
+                    <line x1="50" y1="5" x2="50" y2="95" stroke="white" stroke-width="2"/>
+                    <line x1="5" y1="50" x2="95" y2="50" stroke="white" stroke-width="2"/>
+                </svg>
+            </div>
+            <div class="box-side box-back flex items-center justify-center">
+                <svg class="w-3/4 h-3/4" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M30,30 L70,30 L70,70 L30,70 Z" fill="none" stroke="white" stroke-width="2"/>
+                    <path d="M20,20 L80,20 L80,80 L20,80 Z" fill="none" stroke="white" stroke-width="2"/>
+                    <path d="M10,10 L90,10 L90,90 L10,90 Z" fill="none" stroke="white" stroke-width="2"/>
+                </svg>
+                <img src="flyinepali.jpg" height="250px" style="padding: 0px 30px 0px 35px;" />
+            </div>
+        </div>
+    </div>
+    
+    <div class="memory memory-1 flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 bg-red-600">
+        </div>
+        <div class="text-center p-4 z-10">
+            <h3 class="comic-text text-xl text-white">SPIDER-SENSE</h3>
+            <img src="IMG_20241205_173248_488.jpg" height="150px"/>
+        </div>
+    </div>
+    
+    <div class="memory memory-2 flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 bg-blue-600">
+        </div>
+        <div class="text-center p-4 z-10">
+            <h3 class="comic-text text-xl text-white">WORTHY</h3>
+            <img src="hahaaha.jpg" height="150px" />
+        </div>
+    </div>
+    
+    <div class="memory memory-3 flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 bg-blue-600">
+        </div>
+        <div class="text-center p-4 z-10">
+            <h3 class="comic-text text-xl text-white">HERO TIME</h3>
+            <img src="nepali2.0.jpg" height="150px" />
+        </div>
+    </div>
+    
+    <div class="memory memory-4 flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 bg-red-600">
+        </div>
+        <div class="text-center p-4 z-10">
+            <h3 class="comic-text text-xl text-white">THUNDER POWER</h3>
+            <img src="IMG_20241205_173246_609.jpg" height="150px" />
+        </div>
+    </div>
+    
+    <div class="gift-card">
+        <div class="gift-card-inner">
+            <h2 class="text-2xl font-bold mb-4 text-center comic-text text-blue-600">SOME MORE PHOTOS</h2>
+            <div class="collage">
+                <div class="collage-item bg-yellow-600">
+                    <div class="hero-icon"></div>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="hero-icon-class">
+                            <div class="collage-text-area" >
+                                <h2 class="text-2xl font-bold mb-4 text-center comic-text text-pink-600">2023, 2024 AND 2025</h2>
+                            </div>
+                            <img src="IMG_20230719_143330_289.jpg" height="160px"/>
+                            <img src="IMG-20231024-WA0001.jpg" height="160px"/>
+                            <img src="IMG-20250508-WA0006.jpg" width="140px" />
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="collage-item bg-blue-600">
+                    <div class="hero-icon"></div>
+                    <div class="hero-icon-class">  
+                        <img src="Happy Birthday Cat GIF.gif" height="50px" />
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <h4 class="comic-text text-3xl text-white drop-shadow-lg" style="font-size: small;">HAPPY BIRTHDAY TO YOU</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="collage-item bg-yellow-500">
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <svg class="w-1/2 h-1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M40,20 L60,20 L60,40 L80,40 L80,60 L60,60 L60,80 L40,80 L40,60 L20,60 L20,40 L40,40 Z" fill="none" stroke="white" stroke-width="2"/>
+                        </svg>
+                        <img src="IMG_20230719_143333_840.jpg" height="100px" />
+                    </div>
+                </div>
+               
+            </div>
+            <div class="text-center">
+                <p class="comic-text text-xl text-gray-800">HAVE A GREATE DAY</p>
+                <p class="mt-2 text-gray-600">May your birthday be as amazing as Spider-Man and as mighty as Thor!</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="message mt-8">
+        <h2 class="text-2xl font-bold mb-4 text-center comic-text text-red-600">TO MY SPEACIAL FRIEND</h2>
+        <p class="mb-4">
+            Happy birthday idiot 💐 you are the best person I had ever met...
+            I'm having no words right now to describe how incredible you are...
+            I wish you could see yourself the way I did...
+            it always feels really satisfactory and brings sudden happiness whenever I talk tyou...
+            you have a really unique and special place in my life, a really unique bond 
+            no-one can replace you from that position...
+            you're the best, cutest, most honest person... I'm always here.
+            And I wish you to stay happy always and you have an unending subscription for 
+            being irritated by me - you can't do anything about it 😂
+            anyways do enjoy and stay happy 🐷</p>
+    </div>
+    
+    <div class="message mt-8">
+        <h2 class="text-2xl font-bold mb-4 text-center comic-text text-red-600" style=" font-size: clamp(2rem, 4vw, 3rem);
+        font-weight: 700; margin-bottom: 1rem;text-shadow: 0 0 20px rgba(0, 0, 0, 0.5);">Photo Gallery 📸</h2>
+        <div class="section-header">
+            
+            <div class="title-underline"></div>
+        </div>
+        <div class="gallery-container">
+            <!-- Photo 1 -->
+            <div class="photo-card">
+                <img src="IMG_20230719_143330_289.jpg" alt="Memory 1" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div class="photo-placeholder" style="display: none;">
+                    <div>📷</div>
+                    <p>photo-1</p>
+                </div>
+                <div class="photo-overlay">
+                    <div style="font-weight: 600;">1st jan 2023</div>
+                    <div style="font-size: 0.9rem; opacity: 0.8;">cotton candy ghost✨</div>
+                </div>
+            </div>
+
+            <!-- Photo 2 -->
+            <div class="photo-card">
+                <img src="IMG_20230719_143333_840.jpg" alt="Memory 2" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div class="photo-placeholder" style="display: none;">
+                    <div>📷</div>
+                    <p>Photo 2</p>
+                </div>
+                <div class="photo-overlay">
+                    <div style="font-weight: 600;">yeh b jan 2023 ki hi hai</div>
+                    <div style="font-size: 0.9rem; opacity: 0.8;">Tani aur Lovish k sath thy rock gareden🐱</div>
+                </div>
+            </div>
+
+            <!-- Photo 3 -->
+            <div class="photo-card">
+                <img src="IMG_20230719_143336_403.jpg" alt="Memory 3" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div class="photo-placeholder" style="display: none;">
+                    <div>📷</div>
+                    <p>Photo 3</p>
+                </div>
+                <div class="photo-overlay">
+                    <div style="font-weight: 600;">HEHE CHASHMISH🤓</div>
+                    <div style="font-size: 0.9rem; opacity: 0.8;">Tu tuje chashmish bolk chidhaya ja sakta, muje mat bolio</div>
+                </div>
+            </div>
+
+            <!-- Photo 4 -->
+            <div class="photo-card">
+                <img src="IMG_20241205_173241_020.jpg" alt="Memory 4" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div class="photo-placeholder" style="display: none;">
+                    <div>📷</div>
+                    <p>Photo 4</p>
+                </div>
+                <div class="photo-overlay">
+                    <div style="font-weight: 600;">yeh tho abhi ki thi</div>
+                    <div style="font-size: 0.9rem; opacity: 0.8;">11 dec 2024✨</div>
+                </div>
+            </div>
+
+            <!-- Photo 5 -->
+            <div class="photo-card">
+                <img src="IMG_20241205_173246_609.jpg" alt="Memory 5" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div class="photo-placeholder" style="display: none;">
+                    <div>📷</div>
+                    <p>Photo 5</p>
+                </div>
+                <div class="photo-overlay">
+                    <div style="font-weight: 600;"> 🐼🐻‍❄️🐻</div>
+                    <div style="font-size: 0.9rem; opacity: 0.8;">We bear bares😼</div>
+                </div>
+            </div>
+
+            <!-- Photo 6 -->
+            <div class="photo-card">
+                <img src="IMG-20250508-WA0006.jpg" alt="Memory 6" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div class="photo-placeholder" style="display: none;">
+                    <div>📷</div>
+                    <p>Photo 6</p>
+                </div>
+                <div class="photo-overlay">
+                    <div style="font-weight: 600;">wowww</div>
+                    <div style="font-size: 0.9rem; opacity: 0.8;">you are wonderfull🌟</div>
+                </div>
+            </div>
+
+            <!-- Photo 7 -->
+            <div class="photo-card">
+                <img src="IMG-20250401-WA0018.jpg" alt="Memory 7" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div class="photo-placeholder" style="display: none;">
+                    <div>📷</div>
+                    <p>Photo 7</p>
+                </div>
+                <div class="photo-overlay">
+                    <div style="font-weight: 600;">Don't move</div>
+                    <div style="font-size: 0.9rem; opacity: 0.8;">You're on gun point, Hands behind your back🔫👩‍✈️</div>
+                </div>
+            </div>
+
+            <!-- Photo 8 -->
+            <div class="photo-card">
+                <img src="IMG-20231024-WA0001.jpg" alt="Memory 8" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div class="photo-placeholder" style="display: none;">
+                    <div>📷</div>
+                    <p>Photo 8</p>
+                </div>
+                <div class="photo-overlay">
+                    <div style="font-weight: 600;">Crime Master</div>
+                    <div style="font-size: 0.9rem; opacity: 0.8;">Looks more like a chappal chor🩴</div>
+                </div>
+            </div>
+
+            <!-- Photo 9 -->
+            <div class="photo-card">
+                <img src="IMG-20250508-WA0007.jpg" alt="Memory 9" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" >
+                <div class="photo-placeholder" style="display: none;">
+                    <div>📷</div>
+                    <p>Photo 9</p>
+                </div>
+                <div class="photo-overlay">
+                    <div style="font-weight: 600;">MEOWW</div>
+                    <div style="font-size: 0.9rem; opacity: 0.8;">Achi photo le le ik adhi tho atleast🌟</div>
+                </div>
+            </div>
+
+            <!-- Photo 10 -->
+            <div class="photo-card">
+                <img src="joker.jpg" alt="Memory 10" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div class="photo-placeholder" style="display: none;">
+                    <div>📷</div>
+                    <p>Photo 10</p>
+                </div>
+                <div class="photo-overlay">
+                    <div style="font-weight: 600;">Xhopi</div>
+                    <div style="font-size: 0.9rem; opacity: 0.8;">Don't ask me how i get this one</div>
+                </div>
+            </div>
+             <div class="photo-card">
+                <img src="nepali2.0.jpg" alt="Memory 11" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div class="photo-placeholder" style="display: none;">
+                    <div>📷</div>
+                    <p>Photo 11</p>
+                </div>
+                <div class="photo-overlay">
+                    <div style="font-weight: 600;">Shabzi</div>
+                    <div style="font-size: 0.9rem; opacity: 0.8;">Aree shabzi, Momo ka redi koi utha k le gya abhi yeh roll ka buisness chalu kiya hai  </div>
+                </div>
+            </div>
+
+            <!-- Photo 8 -->
+            <div class="photo-card">
+                <img src="IMG_20241205_173248_488.jpg" alt="Memory 12" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div class="photo-placeholder" style="display: none;">
+                    <div>📷</div>
+                    <p>Photo 12</p>
+                </div>
+                <div class="photo-overlay">
+                    <div style="font-weight: 600;">Memory 12</div>
+                    <div style="font-size: 0.9rem; opacity: 0.8;">You are never alone , i'm alway there to irritate you👍</div>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 2rem; ">
+            <p style="color: white; font-size: 1.1rem; opacity: 0.9; text-shadow: 0 0 10px rgba(0,0,0,0.5);">
+                jitni backchodiya thi sari tho cover nhi kr sakti🥲 cause kuch kuch photo ya video nhi 
+                hai or bhot zyda cheeze add krni thi vese tho... pr haan try kiya sab krne ka 🫶
+            </p>
+        </div>
+    </div>
+
+    <div class="message mt-8">
+        <h2 class="text-2xl font-bold mb-4 text-center comic-text text-red-600">YOU ARE A WONDERFUL PERSON</h2>
+        <p class="mb-4">
+            <p>Happy birthday idiot 🐷</p>
+            I wanted to include some of the og'est memes I've sent(spammed your DMs with) 
+            but you know how lazy of a person i am 😂😅
+            so taking that into consideration instead of spamming those same memes here.
+            through urls or links i'm just wasting your time intro reading what i'm gonna write in this
+            section cause i don't have the energy to think what to write 
+            I've already told you like uncountable times what type of person you are
+            and how special you are to me if you remeber all that then thats all was true ☺️
+            if you don't that's okay you already have less braincells how much does 
+            it can handle afterall😂it's understandable but coming back to important thing . 
+            i have asked you so much that at this point everything i could think of is something i've 
+            already told you , so i don't want to repeat the whole same words . 
+            Let me learn a new language then i'll surely come up with new 
+            TARIF'S & INSULTS specialy for you, darling .
+            Baki body bna, tension kam le , maze kr , aur alcohol mna nhi krungi but haa kam 
+            consume kri...and always remeber 'there are a lot of good people like me who still 
+            exist let them take care of you' But 
+            "I'm diffirent, im gods favourite" so u know thoda attention👉👈
+            haa bas itna hi chahiye itne me me khush...
+            baki happy aala birthdayyyyy🫂💗💗💗
+        </p>
+    </div>
+    
+    
+    <div id="confetti-container"></div>
+    <div id="web-container"></div>
+    <div id="lightning-container"></div>
+    
+    <div class="message mt-8">
+        <h2 class="text-2xl font-bold mb-4 text-center comic-text text-red-600">TO MY STUPEED FRIEND</h2>
+        <p class="mb-4">Dear Idiot,</p>
+        <p class="mb-4">Here are some reasons why you are such an amzaing person🥰</p>
+        <p class="mb-4">. It's you , you simply are a wonderful, amazing human being </p>
+        <p class="mb-4">. You are such a greate listener as well as a yapper , which creates a wonderful balance of being heard and being updated😇(wese dekha jaye tho u are an uncle but harkatein sari auntiyo wali hai 😂)</p>
+        <p class="mb-4">. You are my lugai (you don't know it but you are🥰)</p>
+        <p class="mb-4">. You're always honest, despite of its conciquencies (well being honest is't actually a problem the problem is being too much honest at the most inappropriate timing for being honest)</p>
+        <p class="mb-4">. Dekha jaye tho tu sachme bhot ageeb prani hai 👽, pr jaisa b hai log jhel hi lete hai, that cause you are a good company😇 (meri sangat ka asar hai😎)</p>
+        <p class="mb-4">. Tuje yaad hai pehle teri bejati krte thy tho tu offend ho jata tha ab nhi hota dekh kitna positive change hai yeh b 😂</p>
+        <p class="mb-4">. You sure are an amzing , funny , honest and loveable person👺 do improve youself and do let your girlfriend(future ones) love you and take care of you and do learn how to be emotionally available</p>
+        <p class="mb-4">And most importantly *Do not lower your standards* they are important okayy✨</p>
+        <p class="mb-4">And once again a veryyyyyyyy happpyyyy birthdayyyyy popat🫂💗💗💗</p>
+
+        <p class="text-right font-bold">With lots of blessings,</p>
+        <p class="text-right comic-text text-xl text-blue-600">Your Shubhchintak</p>
+    </div>
+    
+    <div id="confetti-container"></div>
+    <div id="web-container"></div>
+    <div id="lightning-container"></div>
+    
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const box = document.querySelector('.box');
+            const ribbon = document.getElementById('ribbon');
+            const confettiContainer = document.getElementById('confetti-container');
+            const webContainer = document.getElementById('web-container');
+            const lightningContainer = document.getElementById('lightning-container');
+            
+            // Open the box when clicking the ribbon
+            ribbon.addEventListener('click', function() {
+                box.classList.add('open');
+                createConfetti();
+                createWebs();
+                createLightning();
+            });
+            
+            // Create confetti
+            function createConfetti() {
+                const colors = ['#e23636', '#0088cc', '#ffcc00', '#ffffff'];
+                const shapes = ['circle', 'square', 'triangle'];
+                
+                for (let i = 0; i < 100; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    const shape = shapes[Math.floor(Math.random() * shapes.length)];
+                    const size = Math.random() * 10 + 5;
+                    
+                    confetti.style.width = `${size}px`;
+                    confetti.style.height = `${size}px`;
+                    confetti.style.backgroundColor = color;
+                    
+                    if (shape === 'circle') {
+                        confetti.style.borderRadius = '50%';
+                    } else if (shape === 'triangle') {
+                        confetti.style.width = '0';
+                        confetti.style.height = '0';
+                        confetti.style.backgroundColor = 'transparent';
+                        confetti.style.borderLeft = `${size/2}px solid transparent`;
+                        confetti.style.borderRight = `${size/2}px solid transparent`;
+                        confetti.style.borderBottom = `${size}px solid ${color}`;
+                    }
+                    
+                    confetti.style.position = 'fixed';
+                    confetti.style.left = `${Math.random() * 100}vw`;
+                    confetti.style.top = `${Math.random() * 20 + 80}vh`;
+                    confetti.style.opacity = '0';
+                    confetti.style.animation = `float ${Math.random() * 3 + 2}s linear forwards`;
+                    confetti.style.animationDelay = `${Math.random() * 2}s`;
+                    
+                    confettiContainer.appendChild(confetti);
+                    
+                    // Remove confetti after animation
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 5000);
+                }
+            }
+            
+            // Create spider webs
+            function createWebs() {
+                for (let i = 0; i < 5; i++) {
+                    const web = document.createElement('div');
+                    web.className = 'spider-web';
+                    
+                    // Create SVG web
+                    web.innerHTML = `
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="white" stroke-width="1" opacity="0.7"/>
+                            <path d="M50,5 L50,95 M5,50 L95,50 M15,15 L85,85 M15,85 L85,15" stroke="white" stroke-width="1" opacity="0.7"/>
+                            <path d="M50,5 C 70,30 70,70 50,95" stroke="white" stroke-width="1" opacity="0.7" fill="none"/>
+                            <path d="M50,5 C 30,30 30,70 50,95" stroke="white" stroke-width="1" opacity="0.7" fill="none"/>
+                            <path d="M5,50 C 30,30 70,30 95,50" stroke="white" stroke-width="1" opacity="0.7" fill="none"/>
+                            <path d="M5,50 C 30,70 70,70 95,50" stroke="white" stroke-width="1" opacity="0.7" fill="none"/>
+                        </svg>
+                    `;
+                    
+                    web.style.position = 'fixed';
+                    web.style.left = `${Math.random() * 80 + 10}vw`;
+                    web.style.top = `${Math.random() * 80 + 10}vh`;
+                    web.style.transform = 'scale(0)';
+                    web.style.opacity = '0';
+                    web.style.animation = `webGrow 1s forwards`;
+                    web.style.animationDelay = `${i * 0.5 + 1}s`;
+                    
+                    webContainer.appendChild(web);
+                    
+                    // Remove web after some time
+                    setTimeout(() => {
+                        web.style.transition = 'opacity 1s';
+                        web.style.opacity = '0';
+                        setTimeout(() => {
+                            web.remove();
+                        }, 1000);
+                    }, 7000 + i * 500);
+                }
+            }
+            
+            // Create lightning
+            function createLightning() {
+                for (let i = 0; i < 5; i++) {
+                    const lightning = document.createElement('div');
+                    lightning.className = 'lightning';
+                    
+                    // Create SVG lightning
+                    lightning.innerHTML = `
+                        <svg width="100" height="200" viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M60,10 L30,80 L55,80 L20,190" stroke="#ffcc00" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M60,10 L30,80 L55,80 L20,190" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    `;
+                    
+                    lightning.style.position = 'fixed';
+                    lightning.style.left = `${Math.random() * 80 + 10}vw`;
+                    lightning.style.top = `${Math.random() * 50}vh`;
+                    lightning.style.animation = `lightning 2s forwards`;
+                    lightning.style.animationDelay = `${i * 1 + 2}s`;
+                    
+                    lightningContainer.appendChild(lightning);
+                    
+                    // Remove lightning after animation
+                    setTimeout(() => {
+                        lightning.remove();
+                    }, 4000 + i * 1000);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
